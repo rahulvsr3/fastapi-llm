@@ -1,13 +1,13 @@
-import requests
-from app.config import TWITTER_BEARER_TOKEN
+import snscrape.modules.twitter as sntwitter
 
-TWITTER_SEARCH_URL = "https://api.twitter.com/2/tweets/search/recent"
-
-def fetch_tweets(keyword: str, max_results: int = 10):
-    headers = {"Authorization": f"Bearer {TWITTER_BEARER_TOKEN}"}
-    params = {"query": keyword, "max_results": max_results, "tweet.fields": "text"}
-    
-    response = requests.get(TWITTER_SEARCH_URL, headers=headers, params=params)
-    response.raise_for_status()
-    tweets = response.json().get("data", [])
-    return [tweet["text"] for tweet in tweets]
+def fetch_tweets(keyword: str, limit: int = 10):
+    """
+    Fetch recent tweets using snscrape (no API key required).
+    Returns a list of tweet texts.
+    """
+    tweets = []
+    for i, tweet in enumerate(sntwitter.TwitterSearchScraper(keyword).get_items()):
+        if i >= limit:
+            break
+        tweets.append(tweet.content)
+    return tweets

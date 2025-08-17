@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from app.models import SentimentRequest, SentimentResponse
-from app.services import twitter_service, llm_service
+from app.services import app_service, llm_service
 
 app = FastAPI(title="Twitter Sentiment Analysis API (Free LLM, Background Download)")
 
@@ -12,7 +12,7 @@ def startup_event():
 @app.post("/analyze-sentiment", response_model=SentimentResponse)
 def analyze_sentiment(req: SentimentRequest):
     try:
-        tweets = twitter_service.fetch_tweets(req.keyword)
+        tweets = app_service.fetch_tweets(req.keyword)
         if not tweets:
             return {"keyword": req.keyword, "sentiment_summary": "No tweets found for this keyword."}
         

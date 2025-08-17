@@ -1,0 +1,18 @@
+### Health check
+GET http://127.0.0.1:8000/
+
+### Analyze sentiment for "trump"
+POST http://127.0.0.1:8000/analyze-sentiment
+Content-Type: application/json
+
+{
+  "keyword": "trump"
+}
+
+### Analyze sentiment for "space exploration"
+POST http://127.0.0.1:8000/analyze-sentiment
+Content-Type: application/json
+
+{
+  "keyword": "space exploration"
+}
