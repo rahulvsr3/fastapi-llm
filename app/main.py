@@ -2,7 +2,12 @@ from fastapi import FastAPI, HTTPException
 from app.models import SentimentRequest, SentimentResponse
 from app.services import twitter_service, llm_service
 
-app = FastAPI(title="Twitter Sentiment Analysis API (Free LLM, Cached)")
+app = FastAPI(title="Twitter Sentiment Analysis API (Free LLM, Background Download)")
+
+# Start model download in background when app starts
+@app.on_event("startup")
+def startup_event():
+    llm_service.start_model_download_background()
 
 @app.post("/analyze-sentiment", response_model=SentimentResponse)
 def analyze_sentiment(req: SentimentRequest):
@@ -19,7 +24,7 @@ def analyze_sentiment(req: SentimentRequest):
 
 @app.get("/status")
 def status():
-    """Returns LLM model download and storage status"""
+    """Returns LLM model download, storage, and queue status"""
     try:
         status_info = llm_service.get_model_status()
         return status_info
