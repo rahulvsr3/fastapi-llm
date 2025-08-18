@@ -1,8 +1,7 @@
-fastapi
-uvicorn
-requests
-pydantic
-python-dotenv
-transformers
-torch
-snscrape
+fastapi==0.111.1
+uvicorn==0.23.1
+openai==1.33.0
+snscrape==0.4.4.20230720
+python-dotenv==1.1.1
+httpx==1.2.3
+ruff==0.0.302

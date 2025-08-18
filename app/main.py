@@ -1,32 +1,29 @@
-from fastapi import FastAPI, HTTPException
-from app.models import SentimentRequest, SentimentResponse
-from app.services import app_service, llm_service
+from fastapi import FastAPI
+from pydantic import BaseModel
+from app.services import app_service, llm_service, openai_utils
 
-app = FastAPI(title="Twitter Sentiment Analysis API (Free LLM, Background Download)")
+app = FastAPI(title="FastAPI LLM Sentiment API (OpenAI)")
 
-# Start model download in background when app starts
-@app.on_event("startup")
-def startup_event():
-    llm_service.start_model_download_background()
+class SentimentRequest(BaseModel):
+    keyword: str
+    limit: int = 10
 
-@app.post("/analyze-sentiment", response_model=SentimentResponse)
-def analyze_sentiment(req: SentimentRequest):
-    try:
-        tweets = app_service.fetch_tweets(req.keyword)
-        if not tweets:
-            return {"keyword": req.keyword, "sentiment_summary": "No tweets found for this keyword."}
-        
-        summary = llm_service.analyze_sentiment(tweets)
-        return {"keyword": req.keyword, "sentiment_summary": summary}
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/")
+def root():
+    return {"message": "Hello, FastAPI with OpenAI GPT-3.5 sentiment analysis!"}
 
-@app.get("/status")
-def status():
-    """Returns LLM model download, storage, and queue status"""
-    try:
-        status_info = llm_service.get_model_status()
-        return status_info
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.post("/analyze-sentiment")
+def analyze_sentiment(request: SentimentRequest):
+    tweets = app_service.fetch_tweets(request.keyword, request.limit)
+    sentiment_summary = llm_service.analyze_sentiment(tweets)
+    return {
+        "keyword": request.keyword,
+        "tweets": tweets,
+        "sentiment_summary": sentiment_summary
+    }
+
+@app.get("/openai-usage")
+def openai_usage():
+    used = openai_utils.read_token_usage()
+    remaining = max(0, openai_utils.MAX_TOKENS_PER_MONTH - used)
+    return {"tokens_used": used, "tokens_remaining": remaining}

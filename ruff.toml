@@ -1,0 +1,8 @@
+[tool.ruff]
+target-version = "py311"
+fix = true
+exclude = ["venv", ".venv", ".git", ".github", ".vscode", "node_modules"]
+line-length = 88
+select = ["E", "F", "I", "B", "C"]
+ignore = ["E203", "W503"]
+verbose = true

@@ -1,0 +1,24 @@
+{
+  "name": "FastAPI LLM CPU",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "forwardPorts": [8000],
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.vscode-python-envs",
+        "ms-python.debugpy",
+        "humao.rest-client",
+        "charliermarsh.ruff",
+        "oderwat.indent-rainbow",
+        "usernamehw.errorlens",
+        "github.copilot",
+        "github.copilot-chat",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "features": {}
+}
